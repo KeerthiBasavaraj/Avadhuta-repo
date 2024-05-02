@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title>URL Service</title>
+        <style>
+            h1{
+                color: burlywood;
+                text-align: center;
+                padding: 2%;
+            }
+            #url-form{
+                color: grey;
+                text-align: center;
+            }
+            #btn{
+                margin-top: 1%;
+                color: blue;
+            }
+            #shortned_url{
+                color: red;
+            }
+            p{
+                margin-left: 43%;
+            }
+            h3{
+                text-align: center;
+                color: darkgoldenrod;
+            }
+            #original_url{
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>URL SERVICE</h1>
+        <form id="url-form" onsubmit="formSubmit(event)">
+            <label for="long_url">Enter Long URL: </label><br>
+            <input type="text" id="long_url" name="long_url"><br>
+            <input type="submit" value="Shorten URL" id="btn">
+        </form>
+        <p>Shortned URL: <span id="shortned_url"></span></p><hr>
+        <h3>Decode Shortened URL:</h3>
+        <label for="short_url"><center>Enter Shortened URL: </label><br>
+        <input type="text" id="short_url" name="short_url"><br>
+        <button onclick="originalURL()" id="btn"> Get Original URL</button></center>
+        <p>Original URL: <span id="original_url"></span></p>
+
+        <script>
+            const alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const base=alphabet.length;
+
+            class URLShort{
+                constructor(){
+                    this.urlMap=new Map();
+                    this.shortUrlLength=5; 
+                }
+
+                encodeURL(longURL){
+                    let shortURL= '';
+                    do {
+                        for(let i=0;  i<this.shortUrlLength; i++){
+                            const randomIndex=Math.floor(Math.random() * base);
+                            shortURL += alphabet[randomIndex];
+                        } 
+                    }while(this.urlMap.has(shortURL));  
+                        this.urlMap.set(shortURL, longURL);
+                        return `https://short.url/${shortURL}`; 
+                    }
+                    decodeURL(shortURL){
+                        const shortCode=shortURL.substring(shortURL.lastIndexOf('/')+1);
+                        if(this.urlMap.has(shortCode)){
+                            return this.urlMap.get(shortCode); 
+                        } else {
+                            return "Short URL not Found";
+                        }
+                    }
+                }
+
+        
+                const shortener=new URLShort();
+
+                function formSubmit(event){
+                    event.preventDefault(); 
+                    const longURLInput=document.getElementById('long_url');
+                    const longURL=longURLInput.value;
+                    const shortenedURL=shortener.encodeURL(longURL);
+                    document.getElementById('shortned_url').innerText=shortenedURL;
+                }
+
+                //function to decode the shortened url and display the original url
+                function originalURL(){
+                    const shortURLInput=document.getElementById('short_url').value;
+                    const originalURL=shortener.decodeURL(shortURLInput);
+                    document.getElementById('original_url').innerText=originalURL;
+                }
+        </script>
+    </body>
+</html>
